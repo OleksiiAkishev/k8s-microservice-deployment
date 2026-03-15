@@ -14,3 +14,4 @@ Note: exit from env:
 6. Install dependecies if any, e.g (Prometheus):
     pip install fastapi uvicorn prometheus-client
 
+7. Github master branch rules added
