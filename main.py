@@ -3,7 +3,7 @@ from prometheus_client import Counter, generate_latest
 from fastapi.responses import Response
 import time
 
-app = FastApi()
+app = FastAPI()
 
 REQUEST_COUNT = Counter('http_request_total', 'Total HTTP Requests')
 
@@ -13,12 +13,20 @@ def read_root():
 
     messages = ["Kubernetes", "python", "Fast", "API"]
     result = ""
-    for word in messages
+    for word in messages:
         result += word + " "
 
     return {"message": result.strip()}
 
 @app.get("/health")
 def health_check():
-    return {"status": "helthy", "timestamp": time.time()}
+    return {"status": "healthy", "timestamp": time.time()}
+
+@app.get("/metrics")
+def get_metrics():
+    return Response(generate_latest(), media_type="text/plain")
+
+def calculate_uptime(start_time: float) -> float:
+    return time.time() - start_time
+
 
