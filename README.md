@@ -38,3 +38,6 @@ Note: exit from env:
         docker exec 1fac9c0e1256 cat main.py
         --> no terminal kept open
         --> provided command will be output to the terminal
+15. Install helm charts locally and create a boilerplate 
+    sudo snap install helm
+    helm create k8s-python-api-helm
