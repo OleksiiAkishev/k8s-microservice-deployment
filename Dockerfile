@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # --- Stage 2: Final Runtime ---
 FROM python:3.11-slim-bookworm
 
-WORDIR /app
+WORKDIR /app
 
 # Copy only the installed dependencies from the builder stage
 COPY --from=builder /opt/venv /opt/venv
@@ -28,7 +28,7 @@ COPY main.py .
 RUN useradd -m myuser
 USER myuser
 
-EXPOSE 8000
+EXPOSE 8080
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
 
