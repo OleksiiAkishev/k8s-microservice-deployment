@@ -21,4 +21,20 @@ Note: exit from env:
 10. Create Dockerfile and create 2 layers (build, runtime)
 11. Use auto command to create py requirements file:
     pip freeze > requirements.txt
-12.
+12. Build image with
+    docker build -t k8s-python-app:1 .
+        Reminder the . is a build context here, the path the dockerfile is
+13. Check images, run built image:
+    docker images 
+    docker run -p 8000:8080 k8s-python-app:1
+- Tried to run with the detached from terminal:
+    docker run -p 7000:8080 -d k8s-python-app:1
+14. Check the running docker container:
+    docker exec -it <container_id> /bin/sh
+        exec: run a command inside running container
+        -it: interactive terminal (keeps open)
+        /bin/sh : lightweight terminal, also /bin/bash can try
+    Example without -it:
+        docker exec 1fac9c0e1256 cat main.py
+        --> no terminal kept open
+        --> provided command will be output to the terminal
