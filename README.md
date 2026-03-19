@@ -41,3 +41,9 @@ Note: exit from env:
 15. Install helm charts locally and create a boilerplate 
     sudo snap install helm
     helm create k8s-python-api-helm
+16. Learn what is the Service of type ClusterIP:
+    - allows internal communication between pods.
+    - pods communicates only via service.
+    - provides static ip, no changes:
+        means even if pod A destroyed, a new pod B will have the same IP and other pods still can communicate to it. 
+    - pods scalling: if more than one pod replicate deployed, a cluster ip works in this case a load balancer and distributes the requests beetwen pods.
