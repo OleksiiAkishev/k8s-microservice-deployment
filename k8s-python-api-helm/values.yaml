@@ -8,7 +8,7 @@ image:
 service:
   name: http # check if should not be https, then if yes how to achieve encryption
   type: ClusterIP
-  port: 80
+  port: 8080
   protocol: TCP
 
 resources:
