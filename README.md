@@ -47,3 +47,32 @@ Note: exit from env:
     - provides static ip, no changes:
         means even if pod A destroyed, a new pod B will have the same IP and other pods still can communicate to it. 
     - pods scalling: if more than one pod replicate deployed, a cluster ip works in this case a load balancer and distributes the requests beetwen pods.
+17. Render or simulate real helm install:
+    - helm template test ./k8s-python-api-helm
+    - helm install --dry-run --debug my-release ./k8s-python-api-helm  --> simulation of full Helm install without deploying it
+18. Troubleshoot
+    FYI:
+     - helm list : list all releases
+
+19. Install 'kind (Kubernetes in Docker)' to be able to have own local kubernetes cluster
+    - curl -Lo ./kind https://kind.sigs.k8s.io/dl/latest/kind-linux-amd64
+    - chmod +x ./kind
+    - sudo mv ./kind /usr/local/bin/kind
+19.1 Create a cluster
+    - kind create cluster
+    Note: to release resources after your work completed, you can delete cluster with:
+        kind delete cluster
+19.2 After installion is done, check your cluster:
+    kubectl get nodes
+    Result:
+        NAME                 STATUS   ROLES           AGE    VERSION
+        kind-control-plane   Ready    control-plane   119s   v1.35.1
+19.3 Cluster status check:
+    kubectl cluster-info
+        Kubernetes control plane is running at https://127.0.0.1:46673
+        CoreDNS is running at https://127.0.0.1:46673/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+20. Return back to the values.yaml, where the helm template gives parsing error, the line which is pointed by helm cannot be really that line which you need to fix. Try to install and user yaml lints instead.
+    - sudo snap install yq
+    - yq eval '.' ./k8s-python-api-helm/values.yaml
+    Result: Error: bad file './k8s-python-api-helm/values.yaml': yaml: line 6: found unexpected end of stream
