@@ -65,6 +65,6 @@ Create the name of the service account to use
 Namespace picker
 */}}
 {{- define "k8s-python-api-helm.namespace" -}}
-{{- $parts := split "-" .Chart.name -}}
+{{- $parts := splitList "-" .Chart.Name -}}
 {{- join "-" (slice $parts 0 3) -}}
 {{- end -}}

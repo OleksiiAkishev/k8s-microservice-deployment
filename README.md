@@ -97,3 +97,62 @@ Note: exit from env:
     https://github.com/Masterminds/sprig?tab=readme-ov-file
 
 23. Added namespace and configmap templates
+    23.1 Learned how to use the templates helpers if need common logic to be executed.
+24. Separate debug flag for the helm:
+    helm template . --debug
+25. Learn how to debug the context, add debug for render, e.g.
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+        debug-context: |
+    {{ toYaml . | indent 4 }}
+Note: chart debug it is not like a code debug, the output will be available only if there are no errors during rendering and the final render output will have the debug context.
+
+26. Use an official Sprig library to Debug helm charts.
+    https://masterminds.github.io/sprig/string_slice.html
+    Online yaml validator: https://www.yamllint.com/
+    Example of error:
+        Error: template: k8s-python-api-helm/templates/namespace.yaml:4:11: executing "k8s-python-api-helm/templates/namespace.yaml" at <include "k8s-python-api-helm.namespace" .>: error calling include: template: k8s-python-api-helm/templates/_helpers.tpl:70:14: executing "k8s-python-api-helm.namespace" at <slice $parts 0 3>: error calling slice: list should be type of slice or array but map
+    The key was to check what produced by list function, apparently based on the doc it gives the map and not array which was expected by slice function.
+27. Try to deploy on cluster now:
+        helm install --generate-name ./ or helm install aks-pn-release ./
+    Delete release:
+        helm uninstall <release-name>
+28. Learn on the Deployment and pods labels, how and where to define them and why it is matter.
+    Deployment is asking  - which pod belongs to me?
+        spec.selector.matchLabels --> the filter
+            The exact identifier which help to Deployment to find its pods
+        spec.template.metadata.labels --> the labels assigned to pod
+
+    Rule: what is defined in the matchLabels must exist in the labels and vice versa
+28.1 To understand where the pod template definition is started, example:
+    apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ include "k8s-python-api-helm.namespace" . }}
+  name: {{ include "k8s-python-api-helm.fullname" . }}
+  labels:
+    {{- include "k8s-python-api-helm.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "k8s-python-api-helm.selectorLabels" . | nindent 6 }}
+  template:  # <---- This is starting place of the POD template
+    spec:    # <---- POD spec starts here
+      containers:
+28.2 Helm upgrade after deployment fix.
+    helm upgrade <release-name> ./
+28.3 Check the deployment after install:
+    Release "aks-pn-release" has been upgraded. Happy Helming!
+    NAME: aks-pn-release
+    LAST DEPLOYED: Mon Mar 23 11:10:14 2026
+    NAMESPACE: default
+    STATUS: deployed
+    REVISION: 2
+    DESCRIPTION: Upgrade complet
+
+- helm list
+- kubectl get namespaces
+- kubectl get deployment -n 
+- kubectl get events <deployment> -n
