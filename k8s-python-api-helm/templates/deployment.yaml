@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: {{ include "k8s-python-api-helm.namespace" . }}
-  name: {{ printf "%s-deployment" (include "k8s-python-api-helm.fullname" .) }}
+  name: {{ printf "%s-deployment" (include "k8s-python-api-helm.namespace" .) }}
   labels:
     {{- include "k8s-python-api-helm.labels" . | nindent 4 }}
 spec:
