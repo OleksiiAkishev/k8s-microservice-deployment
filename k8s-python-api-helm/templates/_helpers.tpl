@@ -60,3 +60,11 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Namespace picker
+*/}}
+{{- define "k8s-python-api-helm.namespace" -}}
+{{- $parts := split "-" .Chart.name -}}
+{{- join "-" (slice $parts 0 3) -}}
+{{- end -}}

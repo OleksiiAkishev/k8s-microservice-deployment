@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: debug
+data:
+  context: |
+  {{- toYaml . | nindent 4 }}

@@ -76,3 +76,24 @@ Note: exit from env:
     - sudo snap install yq
     - yq eval '.' ./k8s-python-api-helm/values.yaml
     Result: Error: bad file './k8s-python-api-helm/values.yaml': yaml: line 6: found unexpected end of stream
+
+21. Install Linkerd for the mTLS between pods. 
+    Linkerd of doc: https://linkerd.io/2-edge/tasks/install/
+    curl -sL https://run.linkerd.io/install | sh
+    export PATH=$PATH:$HOME/.linkerd2/bin
+    linkerd check --pre - check cluster compatibility
+    linkerd install | kubectl apply -f -  - install Linkerd control plane
+    Mostly will have error to install linkerd install --crds
+    Then to install Gateaway API:
+    kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.0/standard-install.yaml
+    official doc: https://gateway-api.sigs.k8s.io/guides/getting-started/
+    Now can run: 
+        linkerd install | kubectl apply -f -
+    Final check:
+        linkerd check
+
+22. Follow official sprig docs to build templates:
+    https://masterminds.github.io/sprig/string_slice.html
+    https://github.com/Masterminds/sprig?tab=readme-ov-file
+
+23. Added namespace and configmap templates

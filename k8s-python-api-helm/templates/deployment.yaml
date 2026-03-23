@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: {{ include "k8s-python-api-helm.namespace" . }}
   name: {{ include "k8s-python-api-helm.fullname" . }}
   labels:
     {{- include "k8s-python-api-helm.labels" . | nindent 4 }}
