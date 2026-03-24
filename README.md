@@ -156,3 +156,12 @@ spec:
 - kubectl get namespaces
 - kubectl get deployment -n 
 - kubectl get events <deployment> -n
+
+29. Troubleshoot on failed deployment
+    kubectl get deployment <deployment> -n <namespace> -o yaml
+    kubectl get pods -n
+    kubectl get events -n
+    kubectl get events -n <namespace> \
+      --field-selector involvedObject.name=<pod-name>
+    kubectl get pod <pod-name> -n <namespace> -o wide
+    kubectl describe pod <pod> -n
