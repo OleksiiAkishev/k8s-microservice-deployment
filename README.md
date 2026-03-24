@@ -13,7 +13,10 @@ Note: exit from env:
     deactivate
 6. Install dependecies if any, e.g (Prometheus):
     pip install fastapi uvicorn prometheus-client
-
+6.1 Install pytest inside .venv
+    pip install pytest
+6.2 Python tests run:
+    python3 -m pytest
 7. Github master branch rules added 
 8. Create main.py
 9. Create simple run python API application run on 8000
