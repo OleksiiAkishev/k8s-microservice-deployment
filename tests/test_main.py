@@ -1,6 +1,6 @@
 import time
 from fastapi.testclient import TestClient
-from main import app, calculate_uptime
+from app.main import app, calculate_uptime
 
 client = TestClient(app)
 
