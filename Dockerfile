@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-COPY main.py .
+COPY app/main.py .
 
 # Create a non-root user and switch to it
 RUN useradd -m myuser
