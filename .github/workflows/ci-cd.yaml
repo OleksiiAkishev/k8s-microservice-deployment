@@ -25,9 +25,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Compile check (syntax)
+        run: python -m compileall .
+      
+      - name: Lint check
+        run: ruff check .
+
       - name: Run tests
-        run: |
-          pytest
+        run: pytest
+        env:
+          PYTHONPATH: .
 
   docker-build:
     runs-on: ubuntu-latest

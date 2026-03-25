@@ -24,6 +24,8 @@ Note: exit from env:
 10. Create Dockerfile and create 2 layers (build, runtime)
 11. Use auto command to create py requirements file:
     pip freeze > requirements.txt
+11.1 Install all from the requirements
+    pip install -r requirements.txt
 12. Build image with
     docker build -t k8s-python-app:1 .
         Reminder the . is a build context here, the path the dockerfile is
@@ -168,3 +170,11 @@ spec:
       --field-selector involvedObject.name=<pod-name>
     kubectl get pod <pod-name> -n <namespace> -o wide
     kubectl describe pod <pod> -n
+
+30. Create ci/cd process to validate and deliver python app.
+    - __init__.py added and main.py moved to app folder to make the main.py explicitly as module not just folder.
+    - pytest added to requirements.txt
+    - compilation added: python -m compileall .
+    - linting added: ruff check .
+    - pytest added context path: env:
+                                    PYTHONPATH: .
