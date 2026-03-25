@@ -28,6 +28,7 @@ jobs:
       - name: Run tests
         run: |
           pytest
+
   docker-build:
     runs-on: ubuntu-latest
     needs: ci
@@ -37,15 +38,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: |
-            my-docker-repo/my-image:latest
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
