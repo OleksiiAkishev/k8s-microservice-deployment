@@ -60,4 +60,4 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/aks-docker/k8s-python-api:latest
+            ghcr.io/${{ github.repository | toLowerCase }}/k8s-python-api:latest
