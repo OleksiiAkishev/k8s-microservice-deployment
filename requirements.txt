@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+httpx
+prometheus-client
+pytest
+ruff
