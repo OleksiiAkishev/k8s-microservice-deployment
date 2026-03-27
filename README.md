@@ -182,4 +182,7 @@ spec:
 31. Docker packages are pushed to the Github packages via CI workflow process.
 32. Add secret link to the repo secrets
 33. Initial cluster creation on Github - kind:
+    - cluster create
+    - cluster check
+34. Create CD process for secret cluster creation and bind it to the pull secrets process from registry.
     

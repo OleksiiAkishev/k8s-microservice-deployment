@@ -6,7 +6,7 @@ image:
   tag: "latest"
 
 imagePullSecrets:
-  - name: GHCR_TOKEN
+  - name: ghcr-secret
 
 service:
   name: http # check if should not be https, then if yes how to achieve encryption
