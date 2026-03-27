@@ -196,7 +196,7 @@ How does the helm knows where to deploy, it check if there is a cluster install 
             --docker-server=https://ghcr.io \
             --docker-username=${{ github.actor }} \
             --docker-password=${{ secrets.GHCR_TOKEN }} \
-            --docker-email=${{ github.actor }}@users.noreply.github.com \
+            --docker-email=${{ github.actor }}@users.noreply.github.com
 
 36. Learn on Helm + GO interpreting processes:
         how GO parses the objects
@@ -235,3 +235,11 @@ How does the helm knows where to deploy, it check if there is a cluster install 
         []interface{}{} --> invalid syntax, then the  pipe (|) toYaml transorms a GO object to the yaml format, even it seems redundant as the object already stored in the values.yaml in the correct format, as
         imagePullSecrets:
         - name: my-secret
+
+37. TO avoid discrepency between helm release and the cluster release specify the release name when deploying on cluster, example:
+helm upgrade --install k8s-python-api ./k8s-python-api-helm \
+  --namespace <namespace_name> --create-namespace
+  Note: even if namespace will exist during helm templates apply the only discrepency will be taken into consideration.
+
+38. Learned index, access an element by specified position:
+    name: {{ (index .Values.imagePullSecrets 0).name }}

@@ -422,3 +422,6 @@ FodyWeavers.xsd
 
 # Python env
 .venv/
+
+# Local secrets
+secrets-values.yaml
