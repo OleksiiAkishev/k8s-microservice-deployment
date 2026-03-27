@@ -1,9 +1,12 @@
 replicaCount: 1
 
 image:
-  repository: k8s-python-app
+  repository: ghcr.io/oleksiiakishev/k8s-microservice-deployment/k8s-python-api
   pullPolicy: IfNotPresent
-  tag: "1"
+  tag: "latest"
+
+imagePullSecrets:
+  - name: GHCR_TOKEN
 
 service:
   name: http # check if should not be https, then if yes how to achieve encryption
