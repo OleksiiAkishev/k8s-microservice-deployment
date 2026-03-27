@@ -67,6 +67,7 @@ Note: exit from env:
     - kind create cluster
     Note: to release resources after your work completed, you can delete cluster with:
         kind delete cluster
+    - kind create cluster --name <cluster_name>
 19.2 After installion is done, check your cluster:
     kubectl get nodes
     Result:
@@ -148,6 +149,9 @@ spec:
       containers:
 28.2 Helm upgrade after deployment fix.
     helm upgrade <release-name> ./
+How does the helm knows where to deploy, it check if there is a cluster install via context:
+    kubectl config current-context
+
 28.3 Check the deployment after install:
     Release "aks-pn-release" has been upgraded. Happy Helming!
     NAME: aks-pn-release
@@ -185,4 +189,49 @@ spec:
     - cluster create
     - cluster check
 34. Create CD process for secret cluster creation and bind it to the pull secrets process from registry.
-    
+
+35. Before rollout ephermal kind cluster on Github add more functionality and test on local.
+    35.1 Add the secret with the token on local cluster
+    kubectl create secret docker-registry ghcr-secret \
+            --docker-server=https://ghcr.io \
+            --docker-username=${{ github.actor }} \
+            --docker-password=${{ secrets.GHCR_TOKEN }} \
+            --docker-email=${{ github.actor }}@users.noreply.github.com \
+
+36. Learn on Helm + GO interpreting processes:
+        how GO parses the objects
+
+        Object/dictionary (key: val) --> map[string]inteface{}
+        Array/list (- item) --> []inteface{}
+        String/scalar ("test") --> string
+        Number/bool --> int, float64, bool
+
+        Example1: in yaml
+
+        imagePullSecrets:
+        - name: my-secret
+
+        How GO sees that
+        []interface{}{                  // outer list → []interface{}
+            map[string]interface{}{     // inner object → map[string]interface{}
+                "name": "my-secret"     // string value inside the map
+            }
+        }
+
+        Example2:
+        imagePullSecrets:
+        - "1"
+        - "2"
+        
+        How GO sees that
+
+        []interface{}{"1", "2"}
+
+        When error happens like:
+        wrong type for value; expected string; got []interface {}
+        Need to use toYaml function
+        Why use | toYaml:
+        Without it helm parses and evaluates the expression inside {{ }} as Go:
+        []interface{}{} --> invalid syntax, then the  pipe (|) toYaml transorms a GO object to the yaml format, even it seems redundant as the object already stored in the values.yaml in the correct format, as
+        imagePullSecrets:
+        - name: my-secret

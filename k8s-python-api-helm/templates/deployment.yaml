@@ -18,7 +18,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullSecrets: {{ .Values.imagePullSecrets | nindent 8 }}
+          imagePullSecrets: {{ .Values.imagePullSecrets | toYaml | nindent 2 }}
           ports:
             - name: {{ .Values.service.name }}
               containerPort: {{ .Values.service.port }}
