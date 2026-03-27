@@ -240,7 +240,7 @@ How does the helm knows where to deploy, it check if there is a cluster install 
 helm upgrade --install k8s-python-api ./k8s-python-api-helm \
   --namespace <namespace_name> --create-namespace
   Note: even if namespace will exist during helm templates apply the only discrepency will be taken into consideration.
-
+--install: if release not exist, create if yes - update
 38. Learned index, access an element by specified position:
     name: {{ (index .Values.imagePullSecrets 0).name }}
 39. If local helm context has more than one values yaml file, then command must have the explicit name of them:
@@ -289,3 +289,48 @@ Data
 .dockerconfigjson:  96 bytes
 
 the correct type, thus the same pattern to be followed
+
+43. Learned on the flow for the helm upgrade
+helm upgrade --install
+      │
+      ▼
+Templates rendered using values.yaml
+      │
+      ▼
+Resources applied to cluster
+  ├─ Namespace
+  ├─ Secrets / ConfigMaps
+  ├─ Services
+  └─ Deployments
+        │
+        ▼
+Deployment creates ReplicaSet
+        │
+        ▼
+ReplicaSet creates Pods
+        │
+        ▼
+Pods check imagePullSecrets → pull images
+        │
+        ▼
+Containers start
+
+where applied to the cluster, means with real apply command.
+
+44. Learned on the correct deployment restart command:
+    kubectl rollout restart deployment k8s-python-api-deployment -n k8s-python-api
+
+    - restart all pods in the deployment
+    - triggers a rolling restart
+
+45. Filter on the container name when describe pod
+    kubectl describe pod k8s-python-api-7d9f4c5f9 -n <namespace> | grep -A 5 "Containers:"
+    OR
+    kubectl get pod k8s-python-api-7d9f4c5f9 -n <namespace> -o jsonpath='{.spec.containers[*].name}'
+    OR for all properties:
+    kubectl get pod k8s-python-api-deployment-66d477bc57-gf8c7 -n k8s-python-api -o jsonpath='{.spec.containers[*]}'
+
+46. Check container logs:
+    kubectl logs k8s-python-api-deployment-66d477bc57-gf8c7 -c k8s-python-api-helm -n k8s-python-api
+
+47. Check how to hit the container on the cluster
