@@ -243,3 +243,49 @@ helm upgrade --install k8s-python-api ./k8s-python-api-helm \
 
 38. Learned index, access an element by specified position:
     name: {{ (index .Values.imagePullSecrets 0).name }}
+39. If local helm context has more than one values yaml file, then command must have the explicit name of them:
+    helm template my-app ./chart \
+        -f values.yaml \
+        -f secrets-values.yaml \
+        -f prod-values.yaml
+Note:
+    if values.yaml inside chart, need to specify the exact:
+    -f ./chart/values.yaml
+40. Deploy on local with secret creation
+41. describe and get difference learned:
+    get - quick overview in the desire format, e.g., 
+        kubectl get pods -n my-namespace
+        kubectl get deployment <name> -n <namespace> -o yaml
+    describe - detailed human-readable information + events.
+        kubectl describe pod app-123 -n my-namespace
+42. Troubleshoot on the error:
+ failed to pull and unpack image "ghcr.io/oleksiiakishev/k8s-microservice-deployment/k8s-python-api:latest": failed to resolve reference "ghcr.io/oleksiiakishev/k8s-microservice-deployment/k8s-python-api:latest": failed to authorize: failed to fetch anonymous token: unexpected status from GET request to https://ghcr.io/token?scope=repository%3Aoleksiiakishev%2Fk8s-microservice-deployment%2Fk8s-python-api%3Apull&service=ghcr.io: 401 Unauthorized
+
+ - check with local cli: 
+    - docker login ghcr.io -u <username> -p <token>
+    - try pull now: docker pull ghcr.io/<owner>/<repo>/<image>:<tag>, e.g., hcr.io/oleksiiakishev/k8s-microservice-deployment/k8s-python-api:latest
+- check (describe) the secret if the name is correct
+- check the imagePullSecrets if correct in deployment with describe as well.
+- learned that for the pull secret the secret type must be of the type:
+    kubernetes.io/dockerconfigjson and not opaque
+For that the manual command can be used:
+ kubectl create secret docker-registry ghcr-secret \
+  --docker-server=ghcr.io \
+  --docker-username=my \
+  --docker-password=token \
+  --docker-email=email
+
+then in the describe can see:
+t
+Name:         ghcr-secret
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Type:  kubernetes.io/dockerconfigjson
+
+Data
+====
+.dockerconfigjson:  96 bytes
+
+the correct type, thus the same pattern to be followed
