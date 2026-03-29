@@ -16,7 +16,7 @@ spec:
         {{- include "k8s-python-api-helm.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-      - name: {{ .Chart.Name }}
+      - name: {{ .Values.containers.name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         ports:
           - name: {{ .Values.service.name }}
