@@ -342,5 +342,5 @@ where applied to the cluster, means with real apply command.
 49. kubectl cluster-info dump
     The complete state of the cluster;
     To avoid huge output - use grep.
-
+        Example: kubectl cluster-info dump | grep authorization-mode
 50. 
