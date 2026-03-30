@@ -16,7 +16,7 @@ spec:
       serviceAccountName: {{ .Values.ingress.name }}-{{ .Values.ingress.namespace }}-controller
       containers:
       - name: {{ .Values.ingress.name }}
-        image: {{ .Values.ingress.name }}:v2.12
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         args:
           - --api.insecure=false
           - --entrypoints.websecure.address=:443

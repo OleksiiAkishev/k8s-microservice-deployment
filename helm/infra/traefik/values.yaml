@@ -7,3 +7,7 @@ service:
   port: 443
   targetPort: 443
   nodePort: 30443
+
+image:
+  repository: traefik
+  tag: v3.6.12
