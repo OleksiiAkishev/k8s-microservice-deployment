@@ -334,3 +334,13 @@ where applied to the cluster, means with real apply command.
     kubectl logs k8s-python-api-deployment-66d477bc57-gf8c7 -c k8s-python-api-helm -n k8s-python-api
 
 47. Check how to hit the container on the cluster
+
+48. Refacor:
+    - added infra (ingress, sa, namespace)
+    - segregated infra and app
+
+49. kubectl cluster-info dump
+    The complete state of the cluster;
+    To avoid huge output - use grep.
+
+50. 
