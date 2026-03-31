@@ -343,4 +343,30 @@ where applied to the cluster, means with real apply command.
     The complete state of the cluster;
     To avoid huge output - use grep.
         Example: kubectl cluster-info dump | grep authorization-mode
-50. 
+50. Learn on services:
+        ```
+        Client (browser)
+            │
+            ▼
+        NodePort Service (Traefik)  ── external entry point, port e.g. 30443
+            │
+            ▼
+        Traefik Pod (Ingress Controller) ── routes traffic to backend services
+            │
+            ▼
+        ClusterIP Service (App) ── internal routing
+            │
+            ▼
+        Application Pod ── container listening on target port (e.g., 443)
+        ```
+
+        ### Short Explanation
+
+        * **NodePort Service** → exposes Traefik externally
+        * **Traefik Pod** → ingress controller, handles routing, TLS, rules
+        * **ClusterIP Service** → internal access to application pod/ exposes Application (e.g., web api internally)
+        * **App Pod** → the actual container serving the application
+
+        > TL;DR: External → NodePort → Traefik → ClusterIP → Pod
+
+        This captures the core flow for external-to-internal traffic via Traefik.
