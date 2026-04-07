@@ -370,3 +370,34 @@ where applied to the cluster, means with real apply command.
         > TL;DR: External → NodePort → Traefik → ClusterIP → Pod
 
         This captures the core flow for external-to-internal traffic via Traefik.
+
+51. Traefik deployed and running, as expected error regarding SA
+    "Failed to watch" err="failed to list *v1alpha1.IngressRouteUDP: ingressrouteudps.traefik.io is forbidden: User \"system:serviceaccount:ingress:traefik-ingress-controller\" cannot list resource \"ingressrouteudps\" in API group \"traefik.io\" at the cluster scope" logger="UnhandledError" reflector="k8s.io/client-go@v0.34.3/tools/cache/reflector.go:290" type="*v1alpha1.IngressRouteUDP"
+
+52. How to check if particular service account is allowed to do the action:
+        kubectl auth can-i list services \
+  --as=system:serviceaccount:ingress:traefik-ingress-controller
+  Flow:
+    kubectl auth can-i -> API server -> RBAC engine -> returns yes/no
+    etcd = the filing cabinet where all rules are stored
+52.1 Check all roles:
+    kubectl get roles -A
+    kubectl get clusterroles
+Note: 
+    - the role has only rights where it exists, it doesn't have the ability to access outside specified namespace.
+    - the cluster role is cluster-wide, can go everywhere.
+52.2 Check the role bindings:
+    kubectl get rolebindings -A
+    kubectl get clusterrolebindings
+Note:
+    - role binding binds a Role to the SA in the namespace.
+    - cluster role binding the same concept, role(cluster) to SA.
+52.3 Check what the SA can do in the CLuster:
+    kubectl auth can-i --list \
+  --as=system:serviceaccount:ingress:traefik-ingress-controller
+
+53. To eliminate the upper errors:
+    - Cluster Role template
+    - Cluster Role Binding template
+    - CRDs to be installed:
+        kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
