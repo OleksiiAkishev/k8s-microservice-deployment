@@ -22,6 +22,7 @@ rules:
       "serverstransporttcps",
       "serverstransports",
       "middlewaretcps",
-      "traefikservices"
+      "traefikservices",
+      "configmaps"
     ]
     verbs: ["get", "list", "watch"]
