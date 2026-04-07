@@ -12,9 +12,10 @@ rules:
     verbs: ["get", "list", "watch"]
 
   - apiGroups: ["traefik.io"]
-    resources: 4
-      - "ingressroutes"
-      - "ingressroutetcps"
-      - "ingressrouteudps"
-      - "middlewares"
+    resources: [
+      "ingressroutes",
+      "ingressroutetcps",
+      "ingressrouteudps",
+      "middlewares"
+    ]
     verbs: ["get", "list", "watch"]
