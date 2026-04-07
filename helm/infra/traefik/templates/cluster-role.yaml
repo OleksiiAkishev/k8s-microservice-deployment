@@ -16,6 +16,12 @@ rules:
       "ingressroutes",
       "ingressroutetcps",
       "ingressrouteudps",
-      "middlewares"
+      "middlewares",
+      "tlsstores",
+      "tlsoptions",
+      "serverstransporttcps",
+      "serverstransports",
+      "middlewaretcps",
+      "traefikservices"
     ]
     verbs: ["get", "list", "watch"]
