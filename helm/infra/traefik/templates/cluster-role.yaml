@@ -11,6 +11,10 @@ rules:
     resources: ["endpointslices"]
     verbs: ["get", "list", "watch"]
 
+  - apiGroups: ["k8s.io"]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+
   - apiGroups: ["traefik.io"]
     resources: [
       "ingressroutes",
@@ -22,7 +26,6 @@ rules:
       "serverstransporttcps",
       "serverstransports",
       "middlewaretcps",
-      "traefikservices",
-      "configmaps"
+      "traefikservices"
     ]
     verbs: ["get", "list", "watch"]
