@@ -8,7 +8,8 @@ rules:
       "services", 
       "endpoints", 
       "secrets",
-      "configmaps"
+      "configmaps",
+      "nodes"
       ]
     verbs: ["get", "list", "watch"]
 
