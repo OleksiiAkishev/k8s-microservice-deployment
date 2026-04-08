@@ -4,15 +4,16 @@ metadata:
   name: {{ .Values.ingress.name }}-role
 rules:
   - apiGroups: [""]
-    resources: ["services", "endpoints", "secrets"]
+    resources: [
+      "services", 
+      "endpoints", 
+      "secrets",
+      "configmaps"
+      ]
     verbs: ["get", "list", "watch"]
 
   - apiGroups: ["discovery.k8s.io"]
     resources: ["endpointslices"]
-    verbs: ["get", "list", "watch"]
-
-  - apiGroups: ["k8s.io"]
-    resources: ["configmaps"]
     verbs: ["get", "list", "watch"]
 
   - apiGroups: ["traefik.io"]
