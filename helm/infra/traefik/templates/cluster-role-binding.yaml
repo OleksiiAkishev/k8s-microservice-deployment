@@ -4,7 +4,7 @@ metadata:
   name: {{ .Values.ingress.name }}-binding
 subjects:
   - kind: ServiceAccount
-    name: {{ .Values.ingress.name }}-{{ .Values.ingress.namespace }}-controller
+    name: {{ .Values.ingress.name }}-controller
     namespace: {{ .Values.ingress.namespace }}
 roleRef:
   kind: ClusterRole

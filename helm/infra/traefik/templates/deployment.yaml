@@ -13,7 +13,7 @@ spec:
       labels:
         app: {{ .Values.ingress.name }}
     spec:
-      serviceAccountName: {{ .Values.ingress.name }}-{{ .Values.ingress.namespace }}-controller
+      serviceAccountName: {{ .Values.ingress.name }}-controller
       containers:
       - name: {{ .Values.ingress.name }}
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}

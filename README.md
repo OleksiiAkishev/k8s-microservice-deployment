@@ -434,3 +434,6 @@ Note:
         NOte: the cluster issuer is a cluster level, does not need the namespace
     - Check if created:
         kubectl get clusterissuer
+    - Clean up
+    - Traefik cert resource create
+        - Check kubectl get secret -n ingress

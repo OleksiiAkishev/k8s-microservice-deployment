@@ -1,6 +1,6 @@
 ingress:
   name: traefik
-  namespace: ingress
+  namespace: traefik
   containerPort: 443
 
 service:
@@ -11,3 +11,7 @@ service:
 image:
   repository: traefik
   tag: v3.6.12
+
+certManager:
+  clusterIssuer:
+    name: selfsigned-cluster-issuer
