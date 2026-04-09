@@ -401,3 +401,36 @@ Note:
     - Cluster Role Binding template
     - CRDs to be installed:
         kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
+    - one by one fix the missing resources permissions for the traefik cluster role
+
+54. Create IngressRoute template for the application. 
+54.1 Learned on the sockets
+    - socket: port, state, address
+    - socket is created on the client side with the ephermal port which is not listening, but just established to get the response.
+54.2 Why https://localhost:30443 does not give any result in terms of calling cluster
+        1. WSL vs kind node
+            - localhost in WSL → WSL itself.
+            - kind node runs in a Docker container, isolated network namespace.
+            - WSL cannot see NodePort inside the container via localhost.
+        2. Using container IP
+            - Each Docker container has its own IP (e.g., 172.19.0.2. )
+            - Curl to that IP → reaches the container network, where NodePort is listening.
+        3. Why NodePort works
+            - NodePort opens the port inside the container’s network, not the host.
+            - WSL is just a client; it needs the container’s “physical” IP or port-forwarding to reach it.
+        4. Not a DNS trick
+            - This is network routing / isolation, not DNS.
+            - localhost vs container IP is a network namespace difference.
+
+55. Apply TLS termination on cluster communication
+    - official manifest for the cert manager to the cluster:
+        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+    - verify pods after installation:
+        kubectl get pods -n cert-manager
+    - Create ClusterIssuer (internal CA)
+    - Create new infra for cluster issuer template and values yaml
+    - Deploy:
+        helm upgrade --install selfsigned-cluster-issuer ./helm/infra/cert-manager
+        NOte: the cluster issuer is a cluster level, does not need the namespace
+    - Check if created:
+        kubectl get clusterissuer
