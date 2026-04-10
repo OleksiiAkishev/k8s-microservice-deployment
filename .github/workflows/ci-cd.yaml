@@ -93,10 +93,11 @@ jobs:
           kubectl rollout status deployment/k8s-python-api --context ${{ env.CLUSTER_NAME }}-kind-cluster
           kubectl get pods --context ${{ env.CLUSTER_NAME }}-kind-cluster
 
-  helm upgrade --install k8s-python-api ./k8s-python-api-helm \
-  --namespace $(yq e '.namespace' values.yaml) \
-  --create-namespace
+ # additional info commented
+  # helm upgrade --install k8s-python-api ./k8s-python-api-helm \
+  # --namespace $(yq e '.namespace' values.yaml) \
+  # --create-namespace
 
-  helm upgrade --install my-app ./my-chart \
-  --set username=myuser \
-  --set password=$(echo -n $GITHUB_TOKEN)
+  # helm upgrade --install my-app ./my-chart \
+  # --set username=myuser \
+  # --set password=$(echo -n $GITHUB_TOKEN)
