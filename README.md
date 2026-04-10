@@ -437,3 +437,6 @@ Note:
     - Clean up
     - Traefik cert resource create
         - Check kubectl get secret -n ingress
+    - Test if there no TLS error anymore with curl:
+        curl 172.19.0.2:30443
+56. Create Ingress Route to have routing to the application
