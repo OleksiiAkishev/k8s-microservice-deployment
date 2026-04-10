@@ -10,7 +10,7 @@ spec:
     - match: Host(`traefik.local`)
       kind: Rule
       services:
-        - name: {{ include "k8s-python-api-helm.fullname" . }}
+        - name: {{ .Values.service.name }}
           port: {{ .Values.service.port }}
   tls:
     secretName: {{ .Values.tlssecret }}

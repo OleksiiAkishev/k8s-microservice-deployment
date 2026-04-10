@@ -9,10 +9,9 @@ imagePullSecrets:
   - name: ghcr-secret
 
 service:
-  name: https
+  name: python-api
   type: ClusterIP
   port: 443
-  protocol: TCP
 
 resources:
   limits:
