@@ -9,9 +9,9 @@ imagePullSecrets:
   - name: ghcr-secret
 
 service:
-  name: http # check if should not be https, then if yes how to achieve encryption
+  name: https
   type: ClusterIP
-  port: 8080
+  port: 443
   protocol: TCP
 
 resources:
