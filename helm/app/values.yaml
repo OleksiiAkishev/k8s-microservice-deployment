@@ -9,7 +9,7 @@ imagePullSecrets:
   - name: ghcr-secret
 
 service:
-  name: python-api-service
+  name: py-api-service
   type: ClusterIP
   port: 8080
 
