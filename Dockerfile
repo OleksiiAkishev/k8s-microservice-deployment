@@ -28,8 +28,8 @@ COPY app/main.py .
 RUN useradd -m myuser
 USER myuser
 
-EXPOSE 8080
+EXPOSE 443
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "443"]
 
 
