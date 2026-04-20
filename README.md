@@ -440,3 +440,32 @@ Note:
     - Test if there no TLS error anymore with curl:
         curl 172.19.0.2:30443
 56. Create Ingress Route to have routing to the application
+    - Align with the applciation service name and namespace (clusterIP) - important!
+    - app port is 8080 and protocol is http
+    - test with curl -k https://172.19.0.2:30443 -H "Host: traefik.local"
+    - Call from WSL must work
+56.1 Create a mapping between kind cluster and windows host to be able to reach cluster from windows host broswer. 
+    - check docker containers: docker ps
+    - check the kind control plane:
+        docker inspect <control-plane-name>
+    - find the Ports, those ports mapped to the hosted windows. 
+56.2 Add config yaml for the kind cluster, to add the custom configs for the ports, or any other values.
+    - check clusters: kind get clusters
+    - delete existing cluster:
+        kind delete cluster --name <control-plane-name>
+    - add kind-config.yaml to local projects to map ports
+    - create a new cluster with the new name and config file specified:
+        kind create cluster --name my-cluster --config kind-config.yaml
+56.3 Deploy:
+    - application:
+        helm upgrade --install k8s-python-api ./helm/app --namespace k8s-python-api --create-namespace -f helm/app/values.yaml -f helm/app/secrets-values.yaml
+    - traefik:
+        helm upgrade --install traefik ./helm/infra/traefik --namespace traefik --create-namespace -f ./helm/infra/traefik/values.yaml
+    - Apply cert manager and CRDs for the traefik:
+        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+         kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
+57. Learn on the localhost == 127.0.0.1, 
+    as loopback (cycled on itself):
+        - always means “this machine itself”
+        - cannot be used by other machines to reach you
+        - not routable on any network (by design)

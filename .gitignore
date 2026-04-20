@@ -425,3 +425,6 @@ FodyWeavers.xsd
 
 # Local secrets
 secrets-values.yaml
+
+# Kind cluster
+kind-cluster/
