@@ -39,7 +39,7 @@ The cluster runs locally via Kind (Kubernetes in Docker), which lets you iterate
 
 ## :open_file_folder: Project Structure
 
-![Repository Architecture](docs/repository_architecture.png)
+![Project Structure](docs/repository_architecture.png)
 
 ---
 

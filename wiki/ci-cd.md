@@ -6,28 +6,7 @@ Defined in `.github/workflows/ci-cd.yaml`. Triggers on push or PR to `master`, a
 
 ## Jobs Overview
 
-```
-Push to master
-     │
-     ▼
-  [ci]
-  ├─ Lint (ruff)
-  ├─ Compile check (python -m compileall)
-  └─ Unit tests (pytest)
-     │
-     ▼
-  [docker-build]   (needs: ci)
-  ├─ Login to ghcr.io
-  ├─ Build multi-stage image
-  └─ Push → ghcr.io/<owner>/<repo>/k8s-python-api:latest
-     │
-     ▼
-  [ephemeral-cluster-deploy]   (needs: docker-build)
-  ├─ Create Kind cluster
-  ├─ Create dockerconfigjson pull secret
-  ├─ Helm deploy
-  └─ Verify rollout
-```
+![CI Jobs Overview](../docs/jobs_overview.png)
 
 ---
 
@@ -103,26 +82,4 @@ Set at: `GitHub repo → Settings → Secrets and variables → Actions`
 ---
 
 ## Helm Upgrade Flow (what actually happens)
-
-```
-helm upgrade --install
-      │
-      ▼
-Templates rendered with values.yaml
-      │
-      ▼
-Resources applied to cluster:
-  ├─ Namespace
-  ├─ Secrets / ConfigMaps
-  ├─ Services
-  └─ Deployments
-           │
-           ▼
-      Deployment → ReplicaSet → Pods
-                                  │
-                                  ▼
-                         imagePullSecrets checked
-                                  │
-                                  ▼
-                            Containers start
-```
+![Helm Flow](../docs/helm_flow.png)
