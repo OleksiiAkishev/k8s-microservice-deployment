@@ -32,7 +32,7 @@ Image tag is set dynamically from the repository path:
 IMAGE_TAG="ghcr.io/${GITHUB_REPOSITORY,,}/k8s-python-api:latest"
 ```
 
-`${GITHUB_REPOSITORY,,}` lowercases the value — required by ghcr.io (uppercase tags are rejected).
+`${GITHUB_REPOSITORY,,}` lowercases the value - required by ghcr.io (uppercase tags are rejected).
 
 Login uses the `GHCR_TOKEN` repository secret, not `GITHUB_TOKEN`, because the image needs to be pullable from outside the workflow (the Kind cluster in the next job).
 
@@ -40,7 +40,7 @@ Login uses the `GHCR_TOKEN` repository secret, not `GITHUB_TOKEN`, because the i
 
 ## Job: Ephemeral Cluster Deploy
 
-A Kind cluster is created fresh on each run — named after the GitHub actor to avoid collisions on concurrent runs:
+A Kind cluster is created fresh on each run - named after the GitHub actor to avoid collisions on concurrent runs:
 
 ```bash
 CLUSTER_NAME="${GITHUB_ACTOR,,}-kind-cluster"
@@ -75,11 +75,11 @@ kubectl rollout status deployment/k8s-python-api
 
 | Secret | Purpose |
 |---|---|
-| `GHCR_TOKEN` | GitHub PAT with `write:packages` scope — used to push the image in CI and pull it in the cluster |
+| `GHCR_TOKEN` | GitHub PAT with `write:packages` scope - used to push the image in CI and pull it in the cluster |
 
 Set at: `GitHub repo → Settings → Secrets and variables → Actions`
 
-The secret is created as type `kubernetes.io/dockerconfigjson` — not `Opaque`. This is enforced by using `kubectl create secret docker-registry` rather than `secret generic`. A wrong type is silently ignored during image pulls, resulting in a 401 from the registry even when the token is valid. See [Local Setup — Image Pull Secret](local-setup.md#5-image-pull-secret) for details.
+The secret is created as type `kubernetes.io/dockerconfigjson` - not `Opaque`. This is enforced by using `kubectl create secret docker-registry` rather than `secret generic`. A wrong type is silently ignored during image pulls, resulting in a 401 from the registry even when the token is valid. See [Local Setup - Image Pull Secret](local-setup.md#5-image-pull-secret) for details.
 
 ---
 
@@ -89,11 +89,11 @@ This project uses a long-lived GitHub PAT stored as a repository secret. It work
 
 | Approach | What it solves |
 |---|---|
-| **OIDC (Workload Identity)** | Eliminates long-lived PATs entirely — GitHub Actions gets a short-lived token per run via OpenID Connect |
+| **OIDC (Workload Identity)** | Eliminates long-lived PATs entirely - GitHub Actions gets a short-lived token per run via OpenID Connect |
 | **Vault / External Secrets Operator** | Centralized secret storage with dynamic injection into pods at runtime, no secrets in etcd |
 | **Terraform** | Secret lifecycle managed as IaC alongside the rest of the infrastructure |
 
-For this project the PAT approach is intentional — it keeps the setup self-contained and demonstrates the full secret creation flow explicitly.
+For this project the PAT approach is intentional - it keeps the setup self-contained and demonstrates the full secret creation flow explicitly.
 
 ---
 

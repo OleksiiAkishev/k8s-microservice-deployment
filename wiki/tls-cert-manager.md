@@ -22,7 +22,7 @@ kubectl get pods -n cert-manager
 # cert-manager-webhook-...                  1/1     Running   
 ```
 
-All three pods must be `Running`. The webhook pod validates cert-manager resources — if it's not ready, ClusterIssuer creation will fail.
+All three pods must be `Running`. The webhook pod validates cert-manager resources - if it's not ready, ClusterIssuer creation will fail.
 
 ---
 
@@ -107,7 +107,7 @@ Test from WSL using the Kind node IP:
 # Get Kind node container IP
 docker inspect kind-local-dev-control-plane | grep IPAddress
 
-# Curl — -k skips cert verification (expected for self-signed)
+# Curl - -k skips cert verification (expected for self-signed)
 curl -k https://172.19.0.2:30443/health
 # {"status":"healthy","timestamp":...}
 ```
@@ -129,4 +129,4 @@ If you see a TLS handshake error rather than a cert warning, the secret name is 
 
 ## Production Notes
 
-Self-signed certs are fine locally. In production, replace the ClusterIssuer with an ACME issuer (Let's Encrypt) or an internal CA. cert-manager handles the renewal automatically in both cases — the application and ingress config do not change.
+Self-signed certs are fine locally. In production, replace the ClusterIssuer with an ACME issuer (Let's Encrypt) or an internal CA. cert-manager handles the renewal automatically in both cases - the application and ingress config do not change.

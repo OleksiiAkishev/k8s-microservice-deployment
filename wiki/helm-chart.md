@@ -1,8 +1,8 @@
 # Helm Chart
 
 The project has two Helm charts:
-- `helm/app/` — application chart (deployment, service, configmap, namespace, ingressroute, pull secret)
-- `helm/infra/` — infrastructure charts (Traefik, cert-manager ClusterIssuer)
+- `helm/app/` - application chart (deployment, service, configmap, namespace, ingressroute, pull secret)
+- `helm/infra/` - infrastructure charts (Traefik, cert-manager ClusterIssuer)
 
 `k8s-python-api-helm/` in the project root is an earlier version of the app chart, used in the current CI/CD pipeline.
 
@@ -29,7 +29,7 @@ helm/app/
 
 ## Deployment Labels
 
-A Deployment finds its pods via `spec.selector.matchLabels`. Whatever is defined there **must** exist in `spec.template.metadata.labels` and vice versa — Kubernetes enforces this.
+A Deployment finds its pods via `spec.selector.matchLabels`. Whatever is defined there **must** exist in `spec.template.metadata.labels` and vice versa - Kubernetes enforces this.
 
 ```yaml
 spec:
@@ -65,7 +65,7 @@ namespace: {{ include "k8s-python-api-helm.namespace" . }}
 
 ---
 
-## toYaml — When and Why
+## toYaml - When and Why
 
 Helm parses values from YAML into Go objects. When you pass a list or object into a template field, Go's representation (`[]interface{}`) is invalid YAML. The `toYaml` pipe converts it back:
 
@@ -74,7 +74,7 @@ Helm parses values from YAML into Go objects. When you pass a list or object int
 imagePullSecrets:
   - name: ghcr-secret
 
-# In template — WRONG (Go object, not YAML):
+# In template - WRONG (Go object, not YAML):
 imagePullSecrets: {{ .Values.imagePullSecrets }}
 
 # Correct:
@@ -126,7 +126,7 @@ helm template my-release ./helm/app
 helm install --dry-run --debug my-release ./helm/app
 ```
 
-Debug what the template context `.` contains — add this to any template temporarily:
+Debug what the template context `.` contains - add this to any template temporarily:
 
 ```yaml
 metadata:

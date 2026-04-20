@@ -24,7 +24,7 @@ ClusterIP Service (app)
 FastAPI Pod (:8080)
 ```
 
-**NodePort** exposes Traefik to the outside. **ClusterIP** is internal only — pods and services communicate through it. Traefik acts as the bridge between the two.
+**NodePort** exposes Traefik to the outside. **ClusterIP** is internal only - pods and services communicate through it. Traefik acts as the bridge between the two.
 
 ---
 
@@ -64,8 +64,8 @@ rules:
 ```
 
 The difference between Role and ClusterRole:
-- **Role** — permissions only within the namespace it lives in
-- **ClusterRole** — cluster-wide, can reach any namespace
+- **Role** - permissions only within the namespace it lives in
+- **ClusterRole** - cluster-wide, can reach any namespace
 
 ---
 

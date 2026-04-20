@@ -21,7 +21,7 @@ chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
 ```
 
-Kind runs each Kubernetes node as a Docker container. When you do `docker ps` after creating a cluster, you will see the node listed there — that mental model helps later when debugging networking.
+Kind runs each Kubernetes node as a Docker container. When you do `docker ps` after creating a cluster, you will see the node listed there - that mental model helps later when debugging networking.
 
 ---
 
@@ -95,7 +95,7 @@ docker exec -it <container_id> /bin/sh
 
 ## 5. Image Pull Secret
 
-The cluster needs credentials to pull the image from `ghcr.io`. The secret must be type `kubernetes.io/dockerconfigjson` — not Opaque. Use `kubectl create secret docker-registry`, not `secret generic`:
+The cluster needs credentials to pull the image from `ghcr.io`. The secret must be type `kubernetes.io/dockerconfigjson` - not Opaque. Use `kubectl create secret docker-registry`, not `secret generic`:
 
 ```bash
 kubectl create secret docker-registry ghcr-secret \
