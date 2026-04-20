@@ -73,7 +73,7 @@ See [CI/CD Pipeline](wiki/ci-cd.md) for job details and required secrets.
 - TLS termination at ingress via cert-manager
 - Least-privilege ClusterRole for Traefik Service Account
 
-See [Secret Management](Secret%20strategy.md) for registry secret approach and production alternatives.
+See [Secret Management](wiki/ci-cd.md#secret-management-production-considerations) for registry secret approach and production alternatives.
 
 ---
 

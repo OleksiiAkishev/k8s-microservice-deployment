@@ -79,6 +79,22 @@ kubectl rollout status deployment/k8s-python-api
 
 Set at: `GitHub repo → Settings → Secrets and variables → Actions`
 
+The secret is created as type `kubernetes.io/dockerconfigjson` — not `Opaque`. This is enforced by using `kubectl create secret docker-registry` rather than `secret generic`. A wrong type is silently ignored during image pulls, resulting in a 401 from the registry even when the token is valid. See [Local Setup — Image Pull Secret](local-setup.md#5-image-pull-secret) for details.
+
+---
+
+## Secret Management: Production Considerations
+
+This project uses a long-lived GitHub PAT stored as a repository secret. It works for a portfolio project but has trade-offs at scale. Common improvements in real environments:
+
+| Approach | What it solves |
+|---|---|
+| **OIDC (Workload Identity)** | Eliminates long-lived PATs entirely — GitHub Actions gets a short-lived token per run via OpenID Connect |
+| **Vault / External Secrets Operator** | Centralized secret storage with dynamic injection into pods at runtime, no secrets in etcd |
+| **Terraform** | Secret lifecycle managed as IaC alongside the rest of the infrastructure |
+
+For this project the PAT approach is intentional — it keeps the setup self-contained and demonstrates the full secret creation flow explicitly.
+
 ---
 
 ## Helm Upgrade Flow (what actually happens)
