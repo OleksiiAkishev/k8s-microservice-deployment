@@ -1,6 +1,6 @@
 # k8s-microservice-deployment
 
-A Python microservice containerized with Docker and deployed to Kubernetes using Helm — built as a hands-on DevOps project covering the full lifecycle from local development to automated cluster deployment.
+A Python microservice containerized with Docker and deployed to Kubernetes using Helm - built as a hands-on DevOps project covering the full lifecycle from local development to automated cluster deployment.
 
 ---
 
@@ -14,24 +14,7 @@ The cluster runs locally via Kind (Kubernetes in Docker), which lets you iterate
 
 ## :building_construction: Architecture
 
-```mermaid
-flowchart LR
-    subgraph CICD ["GitHub Actions"]
-        A[Push to master] --> B[Lint / Test / Compile]
-        B --> C[Docker Build]
-        C --> D[Push to ghcr.io]
-        D --> E[Ephemeral Kind Cluster]
-        E --> F[Helm Deploy]
-    end
-
-    subgraph Cluster ["Kind Cluster"]
-        G[NodePort :30443] --> H[Traefik\nIngress Controller]
-        H -->|IngressRoute| I[ClusterIP Service]
-        I --> J[FastAPI Pod\n:8080]
-    end
-
-    F --> G
-```
+![CI/CD & Cluster Architecture](docs/cicd_k8s_deploy.png)
 
 **Traffic path:** `External → NodePort → Traefik → ClusterIP → Pod`
 
@@ -56,24 +39,7 @@ flowchart LR
 
 ## :open_file_folder: Project Structure
 
-```
-.
-├── app/
-│   └── main.py                    # FastAPI app (/, /health, /metrics)
-├── helm/
-│   ├── app/                       # Application Helm chart
-│   │   └── templates/             # deployment, service, configmap,
-│   │                              # namespace, ingressroute, secret
-│   └── infra/
-│       ├── traefik/               # Traefik ingress controller chart
-│       └── cert-manager/          # ClusterIssuer chart
-├── k8s-python-api-helm/           # Helm chart used in CI/CD pipeline
-├── .github/
-│   └── workflows/
-│       └── ci-cd.yaml             # CI/CD pipeline definition
-├── Dockerfile
-└── requirements.txt
-```
+![Repository Architecture](docs/repository_architecture.png)
 
 ---
 
@@ -82,7 +48,7 @@ flowchart LR
 | Method | Path | Description |
 |---|---|---|
 | GET | `/` | Returns app info |
-| GET | `/health` | Health check — returns `{"status": "healthy"}` |
+| GET | `/health` | Health check - returns `{"status": "healthy"}` |
 | GET | `/metrics` | Prometheus metrics |
 
 ---
@@ -91,9 +57,9 @@ flowchart LR
 
 Three jobs, each depends on the previous:
 
-1. **CI** — syntax compile check (`python -m compileall`), lint (`ruff`), unit tests (`pytest`)
-2. **Docker** — multi-stage image build, push to `ghcr.io`
-3. **Deploy** — spin up ephemeral Kind cluster, create `dockerconfigjson` pull secret, deploy via Helm, verify rollout
+1. **CI** - syntax compile check (`python -m compileall`), lint (`ruff`), unit tests (`pytest`)
+2. **Docker** - multi-stage image build, push to `ghcr.io`
+3. **Deploy** - spin up ephemeral Kind cluster, create `dockerconfigjson` pull secret, deploy via Helm, verify rollout
 
 See [CI/CD Pipeline](wiki/ci-cd.md) for job details and required secrets.
 
