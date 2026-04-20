@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ include "k8s-python-api-helm.namespace" . }}
+  name: {{ printf "%s-deployment" (include "k8s-python-api-helm.namespace" .) }}
+  labels:
+    {{- include "k8s-python-api-helm.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "k8s-python-api-helm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "k8s-python-api-helm.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Values.containers.name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+          - name: {{ .Values.service.name }}
+            containerPort: {{ .Values.service.port }}
+        {{- with .Values.resources }}
+        resources:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+      imagePullSecrets: {{ .Values.imagePullSecrets | toYaml | nindent 8 }}

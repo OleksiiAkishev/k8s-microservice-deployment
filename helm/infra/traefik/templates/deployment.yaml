@@ -1,0 +1,27 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ .Values.ingress.name }}
+  namespace: {{ .Values.ingress.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.ingress.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.ingress.name }}
+    spec:
+      serviceAccountName: {{ .Values.ingress.name }}-controller
+      containers:
+      - name: {{ .Values.ingress.name }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        args:
+          - --api.insecure=false
+          - --entrypoints.websecure.address=:443
+          - --entrypoints.websecure.http.tls=true
+          - --providers.kubernetescrd
+        ports:
+          - name: {{ .Values.service.name }}
+            containerPort: {{ .Values.ingress.containerPort }}

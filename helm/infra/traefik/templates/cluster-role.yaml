@@ -1,0 +1,33 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Values.ingress.name }}-role
+rules:
+  - apiGroups: [""]
+    resources: [
+      "services", 
+      "endpoints", 
+      "secrets",
+      "configmaps",
+      "nodes"
+      ]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["traefik.io"]
+    resources: [
+      "ingressroutes",
+      "ingressroutetcps",
+      "ingressrouteudps",
+      "middlewares",
+      "tlsstores",
+      "tlsoptions",
+      "serverstransporttcps",
+      "serverstransports",
+      "middlewaretcps",
+      "traefikservices"
+    ]
+    verbs: ["get", "list", "watch"]

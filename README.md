@@ -67,6 +67,7 @@ Note: exit from env:
     - kind create cluster
     Note: to release resources after your work completed, you can delete cluster with:
         kind delete cluster
+    - kind create cluster --name <cluster_name>
 19.2 After installion is done, check your cluster:
     kubectl get nodes
     Result:
@@ -148,6 +149,9 @@ spec:
       containers:
 28.2 Helm upgrade after deployment fix.
     helm upgrade <release-name> ./
+How does the helm knows where to deploy, it check if there is a cluster install via context:
+    kubectl config current-context
+
 28.3 Check the deployment after install:
     Release "aks-pn-release" has been upgraded. Happy Helming!
     NAME: aks-pn-release
@@ -178,3 +182,290 @@ spec:
     - linting added: ruff check .
     - pytest added context path: env:
                                     PYTHONPATH: .
+
+31. Docker packages are pushed to the Github packages via CI workflow process.
+32. Add secret link to the repo secrets
+33. Initial cluster creation on Github - kind:
+    - cluster create
+    - cluster check
+34. Create CD process for secret cluster creation and bind it to the pull secrets process from registry.
+
+35. Before rollout ephermal kind cluster on Github add more functionality and test on local.
+    35.1 Add the secret with the token on local cluster
+    kubectl create secret docker-registry ghcr-secret \
+            --docker-server=https://ghcr.io \
+            --docker-username=${{ github.actor }} \
+            --docker-password=${{ secrets.GHCR_TOKEN }} \
+            --docker-email=${{ github.actor }}@users.noreply.github.com
+
+36. Learn on Helm + GO interpreting processes:
+        how GO parses the objects
+
+        Object/dictionary (key: val) --> map[string]inteface{}
+        Array/list (- item) --> []inteface{}
+        String/scalar ("test") --> string
+        Number/bool --> int, float64, bool
+
+        Example1: in yaml
+
+        imagePullSecrets:
+        - name: my-secret
+
+        How GO sees that
+        []interface{}{                  // outer list → []interface{}
+            map[string]interface{}{     // inner object → map[string]interface{}
+                "name": "my-secret"     // string value inside the map
+            }
+        }
+
+        Example2:
+        imagePullSecrets:
+        - "1"
+        - "2"
+        
+        How GO sees that
+
+        []interface{}{"1", "2"}
+
+        When error happens like:
+        wrong type for value; expected string; got []interface {}
+        Need to use toYaml function
+        Why use | toYaml:
+        Without it helm parses and evaluates the expression inside {{ }} as Go:
+        []interface{}{} --> invalid syntax, then the  pipe (|) toYaml transorms a GO object to the yaml format, even it seems redundant as the object already stored in the values.yaml in the correct format, as
+        imagePullSecrets:
+        - name: my-secret
+
+37. TO avoid discrepency between helm release and the cluster release specify the release name when deploying on cluster, example:
+helm upgrade --install k8s-python-api ./k8s-python-api-helm \
+  --namespace <namespace_name> --create-namespace
+  Note: even if namespace will exist during helm templates apply the only discrepency will be taken into consideration.
+--install: if release not exist, create if yes - update
+38. Learned index, access an element by specified position:
+    name: {{ (index .Values.imagePullSecrets 0).name }}
+39. If local helm context has more than one values yaml file, then command must have the explicit name of them:
+    helm template my-app ./chart \
+        -f values.yaml \
+        -f secrets-values.yaml \
+        -f prod-values.yaml
+Note:
+    if values.yaml inside chart, need to specify the exact:
+    -f ./chart/values.yaml
+40. Deploy on local with secret creation
+41. describe and get difference learned:
+    get - quick overview in the desire format, e.g., 
+        kubectl get pods -n my-namespace
+        kubectl get deployment <name> -n <namespace> -o yaml
+    describe - detailed human-readable information + events.
+        kubectl describe pod app-123 -n my-namespace
+42. Troubleshoot on the error:
+ failed to pull and unpack image "ghcr.io/oleksiiakishev/k8s-microservice-deployment/k8s-python-api:latest": failed to resolve reference "ghcr.io/oleksiiakishev/k8s-microservice-deployment/k8s-python-api:latest": failed to authorize: failed to fetch anonymous token: unexpected status from GET request to https://ghcr.io/token?scope=repository%3Aoleksiiakishev%2Fk8s-microservice-deployment%2Fk8s-python-api%3Apull&service=ghcr.io: 401 Unauthorized
+
+ - check with local cli: 
+    - docker login ghcr.io -u <username> -p <token>
+    - try pull now: docker pull ghcr.io/<owner>/<repo>/<image>:<tag>, e.g., hcr.io/oleksiiakishev/k8s-microservice-deployment/k8s-python-api:latest
+- check (describe) the secret if the name is correct
+- check the imagePullSecrets if correct in deployment with describe as well.
+- learned that for the pull secret the secret type must be of the type:
+    kubernetes.io/dockerconfigjson and not opaque
+For that the manual command can be used:
+ kubectl create secret docker-registry ghcr-secret \
+  --docker-server=ghcr.io \
+  --docker-username=my \
+  --docker-password=token \
+  --docker-email=email
+
+then in the describe can see:
+t
+Name:         ghcr-secret
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Type:  kubernetes.io/dockerconfigjson
+
+Data
+====
+.dockerconfigjson:  96 bytes
+
+the correct type, thus the same pattern to be followed
+
+43. Learned on the flow for the helm upgrade
+helm upgrade --install
+      │
+      ▼
+Templates rendered using values.yaml
+      │
+      ▼
+Resources applied to cluster
+  ├─ Namespace
+  ├─ Secrets / ConfigMaps
+  ├─ Services
+  └─ Deployments
+        │
+        ▼
+Deployment creates ReplicaSet
+        │
+        ▼
+ReplicaSet creates Pods
+        │
+        ▼
+Pods check imagePullSecrets → pull images
+        │
+        ▼
+Containers start
+
+where applied to the cluster, means with real apply command.
+
+44. Learned on the correct deployment restart command:
+    kubectl rollout restart deployment k8s-python-api-deployment -n k8s-python-api
+
+    - restart all pods in the deployment
+    - triggers a rolling restart
+
+45. Filter on the container name when describe pod
+    kubectl describe pod k8s-python-api-7d9f4c5f9 -n <namespace> | grep -A 5 "Containers:"
+    OR
+    kubectl get pod k8s-python-api-7d9f4c5f9 -n <namespace> -o jsonpath='{.spec.containers[*].name}'
+    OR for all properties:
+    kubectl get pod k8s-python-api-deployment-66d477bc57-gf8c7 -n k8s-python-api -o jsonpath='{.spec.containers[*]}'
+
+46. Check container logs:
+    kubectl logs k8s-python-api-deployment-66d477bc57-gf8c7 -c k8s-python-api-helm -n k8s-python-api
+
+47. Check how to hit the container on the cluster
+
+48. Refacor:
+    - added infra (ingress, sa, namespace)
+    - segregated infra and app
+
+49. kubectl cluster-info dump
+    The complete state of the cluster;
+    To avoid huge output - use grep.
+        Example: kubectl cluster-info dump | grep authorization-mode
+50. Learn on services:
+        ```
+        Client (browser)
+            │
+            ▼
+        NodePort Service (Traefik)  ── external entry point, port e.g. 30443
+            │
+            ▼
+        Traefik Pod (Ingress Controller) ── routes traffic to backend services
+            │
+            ▼
+        ClusterIP Service (App) ── internal routing
+            │
+            ▼
+        Application Pod ── container listening on target port (e.g., 443)
+        ```
+
+        ### Short Explanation
+
+        * **NodePort Service** → exposes Traefik externally
+        * **Traefik Pod** → ingress controller, handles routing, TLS, rules
+        * **ClusterIP Service** → internal access to application pod/ exposes Application (e.g., web api internally)
+        * **App Pod** → the actual container serving the application
+
+        > TL;DR: External → NodePort → Traefik → ClusterIP → Pod
+
+        This captures the core flow for external-to-internal traffic via Traefik.
+
+51. Traefik deployed and running, as expected error regarding SA
+    "Failed to watch" err="failed to list *v1alpha1.IngressRouteUDP: ingressrouteudps.traefik.io is forbidden: User \"system:serviceaccount:ingress:traefik-ingress-controller\" cannot list resource \"ingressrouteudps\" in API group \"traefik.io\" at the cluster scope" logger="UnhandledError" reflector="k8s.io/client-go@v0.34.3/tools/cache/reflector.go:290" type="*v1alpha1.IngressRouteUDP"
+
+52. How to check if particular service account is allowed to do the action:
+        kubectl auth can-i list services \
+  --as=system:serviceaccount:ingress:traefik-ingress-controller
+  Flow:
+    kubectl auth can-i -> API server -> RBAC engine -> returns yes/no
+    etcd = the filing cabinet where all rules are stored
+52.1 Check all roles:
+    kubectl get roles -A
+    kubectl get clusterroles
+Note: 
+    - the role has only rights where it exists, it doesn't have the ability to access outside specified namespace.
+    - the cluster role is cluster-wide, can go everywhere.
+52.2 Check the role bindings:
+    kubectl get rolebindings -A
+    kubectl get clusterrolebindings
+Note:
+    - role binding binds a Role to the SA in the namespace.
+    - cluster role binding the same concept, role(cluster) to SA.
+52.3 Check what the SA can do in the CLuster:
+    kubectl auth can-i --list \
+  --as=system:serviceaccount:ingress:traefik-ingress-controller
+
+53. To eliminate the upper errors:
+    - Cluster Role template
+    - Cluster Role Binding template
+    - CRDs to be installed:
+        kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
+    - one by one fix the missing resources permissions for the traefik cluster role
+
+54. Create IngressRoute template for the application. 
+54.1 Learned on the sockets
+    - socket: port, state, address
+    - socket is created on the client side with the ephermal port which is not listening, but just established to get the response.
+54.2 Why https://localhost:30443 does not give any result in terms of calling cluster
+        1. WSL vs kind node
+            - localhost in WSL → WSL itself.
+            - kind node runs in a Docker container, isolated network namespace.
+            - WSL cannot see NodePort inside the container via localhost.
+        2. Using container IP
+            - Each Docker container has its own IP (e.g., 172.19.0.2. )
+            - Curl to that IP → reaches the container network, where NodePort is listening.
+        3. Why NodePort works
+            - NodePort opens the port inside the container’s network, not the host.
+            - WSL is just a client; it needs the container’s “physical” IP or port-forwarding to reach it.
+        4. Not a DNS trick
+            - This is network routing / isolation, not DNS.
+            - localhost vs container IP is a network namespace difference.
+
+55. Apply TLS termination on cluster communication
+    - official manifest for the cert manager to the cluster:
+        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+    - verify pods after installation:
+        kubectl get pods -n cert-manager
+    - Create ClusterIssuer (internal CA)
+    - Create new infra for cluster issuer template and values yaml
+    - Deploy:
+        helm upgrade --install selfsigned-cluster-issuer ./helm/infra/cert-manager
+        NOte: the cluster issuer is a cluster level, does not need the namespace
+    - Check if created:
+        kubectl get clusterissuer
+    - Clean up
+    - Traefik cert resource create
+        - Check kubectl get secret -n ingress
+    - Test if there no TLS error anymore with curl:
+        curl 172.19.0.2:30443
+56. Create Ingress Route to have routing to the application
+    - Align with the applciation service name and namespace (clusterIP) - important!
+    - app port is 8080 and protocol is http
+    - test with curl -k https://172.19.0.2:30443 -H "Host: traefik.local"
+    - Call from WSL must work
+56.1 Create a mapping between kind cluster and windows host to be able to reach cluster from windows host broswer. 
+    - check docker containers: docker ps
+    - check the kind control plane:
+        docker inspect <control-plane-name>
+    - find the Ports, those ports mapped to the hosted windows. 
+56.2 Add config yaml for the kind cluster, to add the custom configs for the ports, or any other values.
+    - check clusters: kind get clusters
+    - delete existing cluster:
+        kind delete cluster --name <control-plane-name>
+    - add kind-config.yaml to local projects to map ports
+    - create a new cluster with the new name and config file specified:
+        kind create cluster --name my-cluster --config kind-config.yaml
+56.3 Deploy:
+    - application:
+        helm upgrade --install k8s-python-api ./helm/app --namespace k8s-python-api --create-namespace -f helm/app/values.yaml -f helm/app/secrets-values.yaml
+    - traefik:
+        helm upgrade --install traefik ./helm/infra/traefik --namespace traefik --create-namespace -f ./helm/infra/traefik/values.yaml
+    - Apply cert manager and CRDs for the traefik:
+        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+         kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.6/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
+57. Learn on the localhost == 127.0.0.1, 
+    as loopback (cycled on itself):
+        - always means “this machine itself”
+        - cannot be used by other machines to reach you
+        - not routable on any network (by design)

@@ -422,3 +422,9 @@ FodyWeavers.xsd
 
 # Python env
 .venv/
+
+# Local secrets
+secrets-values.yaml
+
+# Kind cluster
+kind-cluster/

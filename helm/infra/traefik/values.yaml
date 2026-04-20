@@ -1,0 +1,17 @@
+ingress:
+  name: traefik
+  namespace: traefik
+  containerPort: 443
+
+service:
+  name: websecure
+  port: 443
+  nodePort: 30443
+
+image:
+  repository: traefik
+  tag: v3.6.12
+
+certManager:
+  clusterIssuer:
+    name: selfsigned-cluster-issuer

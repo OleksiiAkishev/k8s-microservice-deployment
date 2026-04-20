@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  namespace: {{ include "k8s-python-api-helm.namespace" . }}
+  name: {{ printf "%s-deployment" (include "k8s-python-api-helm.namespace" .) }}
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`traefik.local`)
+      kind: Rule
+      services:
+        - name: {{ .Values.service.name }}
+          port: {{ .Values.service.port }}
+  tls:
+    secretName: {{ .Values.tlssecret }}

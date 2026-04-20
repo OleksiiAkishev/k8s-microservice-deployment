@@ -1,0 +1,3 @@
+certManager:
+  clusterIssuer:
+    name: selfsigned-cluster-issuer
